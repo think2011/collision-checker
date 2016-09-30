@@ -1,7 +1,7 @@
 💥 矩形碰撞检测
 
 ## demo
-[http://think2011.net/collision-checker](https://think2011.net/collision-checker)
+[think2011.net/collision-checker](//think2011.net/collision-checker)
 
 ## 引用
 UMD规范, 支持AMD、CMD、全局方式应用
