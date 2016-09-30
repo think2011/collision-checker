@@ -1,0 +1,19 @@
+{
+  "name": "collision-checker",
+  "version": "1.0.0",
+  "description": "💥 矩形碰撞检测",
+  "main": "collisionChecker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/think2011/collision-checker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/think2011/collision-checker/issues"
+  },
+  "homepage": "https://github.com/think2011/collision-checker#readme"
+}
