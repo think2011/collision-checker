@@ -2,9 +2,121 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
+    <title>collision-checker demo</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
+        #box1 {
+            width: 100px;
+            height: 100px;
+            line-height: 50px;
+            text-align: center;
+            background: slateblue;
+            position: absolute;
+            top: 25%;
+            left: 30%;
+            transform: translate3d(0, 0, 0);
+        }
+
+        #box1.active {
+            background: salmon;
+        }
+
+        #box2 {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+            background: lightseagreen;
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            cursor: pointer;
+            transform: translate3d(0, 0, 0);
+        }
+
+        #info {
+            border: 1px solid #ccc;
+            box-shadow: 0 0 5px 2px #ccc;
+            position: fixed;
+            top: 0;
+            left: 0;
+            font-size: 15px;
+            margin: 15px;
+            padding: 0 10px 0;
+            background: #eee;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<pre id="info"></pre>
+
+<div id="box1"></div>
+<div id="box2">Drag me</div>
+
+<script src="collisionChecker.js"></script>
+<script>
+    var EVENTS = collisionChecker.isTouch()
+            ? ["touchstart", "touchmove", "touchend"]
+            : ["mousedown", "mousemove", "mouseup"]
+
+    var $     = document.querySelector.bind(document)
+    var $box1 = $('#box1')
+    var $box2 = $('#box2')
+    var $info = $('#info')
+
+    document.addEventListener(EVENTS[1], function (e) {
+        e.preventDefault()
+    })
+
+    $box2.addEventListener(EVENTS[0], function (e) {
+        var eInfo = collisionChecker.getEventInfo(e)
+        var diffX = eInfo.clientX - $box2.offsetLeft
+        var diffY = eInfo.clientY - $box2.offsetTop
+
+        document.addEventListener(EVENTS[1], move)
+        function move(e) {
+            var eInfo         = collisionChecker.getEventInfo(e)
+            var collisionInfo = collisionChecker($box2, $box1)
+
+            $box2.style.left    = eInfo.clientX - diffX + 'px'
+            $box2.style.top     = eInfo.clientY - diffY + 'px'
+            $info.style.display = 'block'
+            $info.innerHTML     = JSON.stringify(collisionInfo, null, 2)
+
+            if (collisionInfo.isCollision) {
+                var collisions = []
+
+                $box1.classList.add('active')
+                Object.keys(collisionInfo).forEach(function (v) {
+                    var key   = v
+                    var value = collisionInfo[key]
+
+                    if (key !== 'isCollision' && value) {
+                        collisions.push(key.substr(2, key.length))
+                    }
+                })
+
+                $box1.innerHTML = collisions.join('<br>')
+            } else {
+                $box1.classList.remove('active')
+                $box1.innerHTML = ''
+            }
+        }
+
+        document.addEventListener(EVENTS[2], end)
+        function end() {
+            document.removeEventListener(EVENTS[1], move)
+            document.removeEventListener(EVENTS[2], end)
+        }
+    })
+</script>
 </body>
 </html>

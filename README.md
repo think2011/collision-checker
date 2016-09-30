@@ -1,2 +1,2 @@
 # collision-checker
-简单矩形碰撞检测
+矩形碰撞检测
