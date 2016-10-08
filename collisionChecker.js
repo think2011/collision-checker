@@ -47,9 +47,13 @@
                         || event.clientY > targetElemPosition.bottom
                         || event.clientX < targetElemPosition.left)
 
-                console.log(event.clientX, targetElemPosition.right)
-
-                return {}
+                return {
+                    hit   : hit,
+                    top   : hit && event.clientY <= targetElemPosition.top + targetElemPosition.height / 2,
+                    right : hit && event.clientX >= targetElemPosition.left + targetElemPosition.width / 2,
+                    bottom: hit && event.clientY >= targetElemPosition.top + targetElemPosition.height / 2,
+                    left  : hit && event.clientX <= targetElemPosition.left + targetElemPosition.width / 2
+                }
             }
         }
 

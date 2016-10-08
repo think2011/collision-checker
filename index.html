@@ -64,11 +64,13 @@
 
     new Dragify($box2)
             .on('move', function () {
-                var hitInfo = collisionChecker($box1) //如果不传,则用event代替
-//                var hitInfo = collisionChecker($box1, $box2)
+//                var hitInfo = collisionChecker($box1) //如果不传,则用event代替
+                var hitInfo = collisionChecker($box1, $box2)
 
                 if (hitInfo.hit) {
                     var infoBox = []
+
+                    console.log(hitInfo)
 
                     $box2.style.opacity = .7
                     $box1.classList.add('active')
