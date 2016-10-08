@@ -37,27 +37,13 @@
             top: 45%;
             left: 50%;
             cursor: pointer;
+            transition: opacity .3s ease !important;
             transform: translate3d(0, 0, 0);
-        }
-
-        #info {
-            border: 1px solid #ccc;
-            box-shadow: 0 0 5px 2px #ccc;
-            position: fixed;
-            top: 0;
-            left: 0;
-            font-size: 15px;
-            margin: 15px;
-            padding: 0 10px 0;
-            background: #eee;
-            display: none;
         }
     </style>
 </head>
 
 <body>
-<pre id="info"></pre>
-
 <div id="box1"></div>
 <div id="box2">Drag me</div>
 
@@ -71,36 +57,37 @@
     var $     = document.querySelector.bind(document)
     var $box1 = $('#box1')
     var $box2 = $('#box2')
-    var $info = $('#info')
 
     document.addEventListener(EVENTS[1], function (e) {
         e.preventDefault()
     })
 
-    new Dragify($box2).on('move', function () {
-        var collisionInfo = collisionChecker($box2, $box1)
+    new Dragify($box2)
+            .on('move', function () {
+                var hitInfo = collisionChecker($box1) //如果不传,则用event代替
+//                var hitInfo = collisionChecker($box1, $box2)
 
-        $info.innerHTML = JSON.stringify(collisionInfo, null, 2)
+                if (hitInfo.hit) {
+                    var infoBox = []
 
-        if (collisionInfo.isCollision) {
-            var collisions = []
+                    $box2.style.opacity = .7
+                    $box1.classList.add('active')
+                    Object.keys(hitInfo).forEach(function (v) {
+                        var key   = v
+                        var value = hitInfo[key]
 
-            $box1.classList.add('active')
-            Object.keys(collisionInfo).forEach(function (v) {
-                var key   = v
-                var value = collisionInfo[key]
+                        if (key !== 'hit' && value) {
+                            infoBox.push(key)
+                        }
+                    })
 
-                if (key !== 'isCollision' && value) {
-                    collisions.push(key.substr(2, key.length))
+                    $box1.innerHTML = infoBox.join('<br>')
+                } else {
+                    $box2.style.opacity = 1
+                    $box1.classList.remove('active')
+                    $box1.innerHTML = ''
                 }
             })
-
-            $box1.innerHTML = collisions.join('<br>')
-        } else {
-            $box1.classList.remove('active')
-            $box1.innerHTML = ''
-        }
-    })
 </script>
 </body>
 </html>

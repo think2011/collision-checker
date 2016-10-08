@@ -12,43 +12,52 @@
 }(this, function () {
     /**
      * 检测矩形碰撞 💥
-     * @param elem 拖动元素
      * @param targetElem 被碰撞元素
+     * @param [elem] 拖动元素,如果不传,则用event代替
      * @returns {object}
      */
-    function func(elem, targetElem) {
-        var elemPosition       = func.getPosition(elem)
-        var targetElemPosition = func.getPosition(targetElem)
+    function func(targetElem, elem) {
+        var mode               = elem instanceof Element ? 'node' : 'event'
+        var targetElemPosition = targetElem.getBoundingClientRect()
 
-        var isCollision = !(elemPosition.bottom < targetElemPosition.top
-        || elemPosition.left > targetElemPosition.right
-        || elemPosition.top > targetElemPosition.bottom
-        || elemPosition.right < targetElemPosition.left)
+        var fnMap = {
+            node: function () {
+                var elemPosition = elem.getBoundingClientRect()
+                var hit          =
+                        !(elemPosition.bottom < targetElemPosition.top
+                        || elemPosition.left > targetElemPosition.right
+                        || elemPosition.top > targetElemPosition.bottom
+                        || elemPosition.right < targetElemPosition.left)
 
-        return {
-            isCollision: isCollision,
-            isTop      : isCollision && elemPosition.top <= targetElemPosition.top,
-            isRight    : isCollision && elemPosition.right >= targetElemPosition.right,
-            isBottom   : isCollision && elemPosition.top >= targetElemPosition.top,
-            isLeft     : isCollision && elemPosition.left <= targetElemPosition.left
+                return {
+                    hit   : hit,
+                    top   : hit && elemPosition.top <= targetElemPosition.top,
+                    right : hit && elemPosition.right >= targetElemPosition.right,
+                    bottom: hit && elemPosition.top >= targetElemPosition.top,
+                    left  : hit && elemPosition.left <= targetElemPosition.left
+                }
+            },
+
+            event: function () {
+                var event = func.getEventInfo(window.event)
+
+                var hit =
+                        !(event.clientY < targetElemPosition.top
+                        || event.clientX > targetElemPosition.right
+                        || event.clientY > targetElemPosition.bottom
+                        || event.clientX < targetElemPosition.left)
+
+                console.log(event.clientX, targetElemPosition.right)
+
+                return {}
+            }
         }
+
+        return fnMap[mode]()
     }
 
     func.getEventInfo = function (e) {
         return func.isTouch() ? e.targetTouches[0] : e
-    }
-
-    func.getPosition = function (elem) {
-        if (!(elem instanceof window.HTMLElement)) {
-            throw new Error('params must be a HTMLElement')
-        }
-
-        return {
-            top   : elem.offsetTop,
-            right : elem.offsetLeft + elem.offsetWidth,
-            bottom: elem.offsetTop + elem.offsetHeight,
-            left  : elem.offsetLeft
-        }
     }
 
     func.isTouch = function (e) {

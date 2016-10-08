@@ -1,6 +1,6 @@
 {
   "name": "collision-checker",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "💥 矩形碰撞检测",
   "main": "collisionChecker.min.js",
   "scripts": {
