@@ -61,6 +61,7 @@
 <div id="box1"></div>
 <div id="box2">Drag me</div>
 
+<script src="Dragify.js"></script>
 <script src="collisionChecker.js"></script>
 <script>
     var EVENTS = collisionChecker.isTouch()
@@ -76,45 +77,28 @@
         e.preventDefault()
     })
 
-    $box2.addEventListener(EVENTS[0], function (e) {
-        var eInfo = collisionChecker.getEventInfo(e)
-        var diffX = eInfo.clientX - $box2.offsetLeft
-        var diffY = eInfo.clientY - $box2.offsetTop
+    new Dragify($box2).on('move', function () {
+        var collisionInfo = collisionChecker($box2, $box1)
 
-        document.addEventListener(EVENTS[1], move)
-        function move(e) {
-            var eInfo         = collisionChecker.getEventInfo(e)
-            var collisionInfo = collisionChecker($box2, $box1)
+        $info.innerHTML = JSON.stringify(collisionInfo, null, 2)
 
-            $box2.style.left    = eInfo.clientX - diffX + 'px'
-            $box2.style.top     = eInfo.clientY - diffY + 'px'
-            $info.style.display = 'block'
-            $info.innerHTML     = JSON.stringify(collisionInfo, null, 2)
+        if (collisionInfo.isCollision) {
+            var collisions = []
 
-            if (collisionInfo.isCollision) {
-                var collisions = []
+            $box1.classList.add('active')
+            Object.keys(collisionInfo).forEach(function (v) {
+                var key   = v
+                var value = collisionInfo[key]
 
-                $box1.classList.add('active')
-                Object.keys(collisionInfo).forEach(function (v) {
-                    var key   = v
-                    var value = collisionInfo[key]
+                if (key !== 'isCollision' && value) {
+                    collisions.push(key.substr(2, key.length))
+                }
+            })
 
-                    if (key !== 'isCollision' && value) {
-                        collisions.push(key.substr(2, key.length))
-                    }
-                })
-
-                $box1.innerHTML = collisions.join('<br>')
-            } else {
-                $box1.classList.remove('active')
-                $box1.innerHTML = ''
-            }
-        }
-
-        document.addEventListener(EVENTS[2], end)
-        function end() {
-            document.removeEventListener(EVENTS[1], move)
-            document.removeEventListener(EVENTS[2], end)
+            $box1.innerHTML = collisions.join('<br>')
+        } else {
+            $box1.classList.remove('active')
+            $box1.innerHTML = ''
         }
     })
 </script>
